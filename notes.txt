@@ -1,0 +1,37 @@
+html data attribute 
+-is just an html attribute
+-have to start with "data-"
+-then give it any name
+
+data set property 
+button.dataset.product.name => all datas attached to the element
+
+if two products have same name give seperate id 
+
+
+const productName = button.dataset.productName;
+
+    let machingItem;
+    cart.forEach((item) => {
+      if (item.productName === productName) {
+        machingItem = item;
+      }
+    });
+
+    if(machingItem) {
+      machingItem.quantity += 1;
+    }else{
+      cart.push(
+      {
+        productName: productName,
+        quantity: 1
+      }
+
+
+    );
+
+    }
+    
+  });
+
+});
