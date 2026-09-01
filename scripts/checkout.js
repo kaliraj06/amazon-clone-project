@@ -1,102 +1,162 @@
-import {cart} from '../data/cart.js';
+import {cart,removeItem,updateDeliveryOption} from '../data/cart.js';
 import {products} from '../data/products.js';
 import { formatCurrency } from './utils/money.js';
+import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
+import {deliveryOptions} from '../data/deliveryOptions.js';
+
+function renderOrderSummary() {
+
+
+
+
 let checkouthtml = '';
-cart.forEach(
-    (checkoutItem) => {
-        let productId = checkoutItem.productId;
-        let machingProduct;
-        products.forEach((mchingProduct) => {
-            if(mchingProduct.id === productId){
+      cart.forEach(
+          (checkoutItem) => {
+              let productId = checkoutItem.productId;
+              let matchingProduct;
+              products.forEach((mchingProduct) => {
+                  if(mchingProduct.id === productId){
 
-                machingProduct = mchingProduct;
+                      matchingProduct = mchingProduct;
+                      
+
+                  }
+              });
+              const deliveryOptionId = checkoutItem.deliveryOptionId;
+              let deliveryOption;
+              deliveryOptions.forEach((option) => {
+                  if(option.id === deliveryOptionId){
+                    deliveryOption = option;
+                  }
+              });
+
+                  let today = dayjs();
+                  const deliveryDate = today.add(
+                    deliveryOption.deliveryDays, 'days'
+                  );
+                  const dateString = deliveryDate.format(
+                    'dddd, MMMM D'
+                  );
+            checkouthtml += 
+            `
+                  <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
+                  <div class="delivery-date">
+                    Delivery date: ${dateString}
+                  </div>
+
+                  <div class="cart-item-details-grid">
+                    <img class="product-image"
+                      src="${matchingProduct.image}">
+
+                    <div class="cart-item-details">
+                      <div class="product-name">
+                        ${matchingProduct.name}
+                      </div>
+                      <div class="product-price">
+                        ${formatCurrency(matchingProduct.priceCents)}
+                      </div>
+                      <div class="product-quantity">
+                        <span>
+                          Quantity: <span class="quantity-label">${checkoutItem.quantity}</span>
+                        </span>
+                        <span class="update-quantity-link link-primary">
+                          Update
+                        </span>
+                        <span class="delete-quantity-link link-primary js-delete-link" data-product-id = "${matchingProduct.id}">
+                          Delete
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="delivery-options">
+                      <div class="delivery-options-title">
+                        Choose a delivery option:
+                      </div>
+                      
+                      ${deliveryOptionsHtml(matchingProduct,checkoutItem)}
+                    </div>
+                  </div>
+                </div>
+
+
+            `;
+
+          }
+      );
+
+      function deliveryOptionsHtml(matchingProduct,checkoutItem){
+                let html = '';
+                deliveryOptions.forEach((deliveryOption) => {
+                  let today = dayjs();
+                  const deliveryDate = today.add(
+                    deliveryOption.deliveryDays, 'days'
+                  );
+                  const dateString = deliveryDate.format(
+                    'dddd, MMMM D'
+                  );
+                  const priceString = deliveryOption.priceCents === 0 ? 'FREE': `${formatCurrency(deliveryOption.priceCents)}`;
+                  const isChecked = deliveryOption.id === checkoutItem.deliveryOptionId;
+                  html += `
+                      <div class="delivery-option js-delivery-option" data-product-id = "${matchingProduct.id}" data-delivery-option-id = "${deliveryOption.id}">
+                        <input type="radio"
+                          ${isChecked ? 'checked' : ''}
+                          class="delivery-option-input"
+                          name="delivery-option-${matchingProduct.id}">
+                        <div>
+                          <div class="delivery-option-date">
+                            ${dateString}
+                          </div>
+                          <div class="delivery-option-price">
+                            ${priceString} Shipping
+                          </div>
+                        </div>
+                      </div>
+
+                  `
+                });
+                return html;
+      }
+      document.querySelector('.js-order-summary').innerHTML = checkouthtml;
+
+      document.querySelectorAll('.js-delete-link').forEach(
+        (link) => {
+              link.addEventListener('click',() => {
+                const productId = link.dataset.productId;
+                removeItem(productId);
+                let container = document.querySelector(`.js-cart-item-container-${productId}`);
+                container.remove();
                 
-
-            }
-        });
-       checkouthtml += 
-       `
-            <div class="cart-item-container">
-            <div class="delivery-date">
-              Delivery date: Tuesday, June 21
-            </div>
-
-            <div class="cart-item-details-grid">
-              <img class="product-image"
-                src="${machingProduct.image}">
-
-              <div class="cart-item-details">
-                <div class="product-name">
-                  ${machingProduct.name}
-                </div>
-                <div class="product-price">
-                  $${formatCurrency(machingProduct.priceCents)}
-                </div>
-                <div class="product-quantity">
-                  <span>
-                    Quantity: <span class="quantity-label">${checkoutItem.quantity}</span>
-                  </span>
-                  <span class="update-quantity-link link-primary">
-                    Update
-                  </span>
-                  <span class="delete-quantity-link link-primary">
-                    Delete
-                  </span>
-                </div>
-              </div>
-
-              <div class="delivery-options">
-                <div class="delivery-options-title">
-                  Choose a delivery option:
-                </div>
-                <div class="delivery-option">
-                  <input type="radio" checked
-                    class="delivery-option-input"
-                    name="delivery-option-1">
-                  <div>
-                    <div class="delivery-option-date">
-                      Tuesday, June 21
-                    </div>
-                    <div class="delivery-option-price">
-                      FREE Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-1">
-                  <div>
-                    <div class="delivery-option-date">
-                      Wednesday, June 15
-                    </div>
-                    <div class="delivery-option-price">
-                      $4.99 - Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-1">
-                  <div>
-                    <div class="delivery-option-date">
-                      Monday, June 13
-                    </div>
-                    <div class="delivery-option-price">
-                      $9.99 - Shipping
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+              });
+        }
+      );
 
 
-       `;
+      document.querySelectorAll('.quantity-label').forEach((excess) => {
+              excess.addEventListener('click', () => {
+                let htmt = '';
+                htmt += `<select>
+                    <option selected value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>`;
+                excess.innerHTML = htmt;
+              });
+      });
+      document.querySelectorAll('.js-delivery-option').forEach((element) => {
+        element.addEventListener('click',()=>{
+          const {productId, deliveryOptionId} = element.dataset;
+          updateDeliveryOption(productId,deliveryOptionId);
+          renderOrderSummary();
+        })
+      });
 
-    }
-);
-document.querySelector('.js-order-summary').innerHTML = checkouthtml;
-
+}
+renderOrderSummary();
 

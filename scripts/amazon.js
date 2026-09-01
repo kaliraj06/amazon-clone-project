@@ -1,7 +1,8 @@
 
 import { formatCurrency } from "./utils/money.js";
 import {products} from "../data/products.js";
-import {cart} from '../data/cart.js';
+import {cart,saveToStorage} from '../data/cart.js';
+
 let productshtml = '';
 
 products.forEach((product) => {
@@ -73,13 +74,15 @@ document.querySelectorAll('.add-to-cart-button').forEach((button) => {
       cart.push(
       {
         productId: productId,
-        quantity: 1
+        quantity: 1,
+        deliveryOptionId:'1'
       }
 
 
     );
-
+    
     }
+    saveToStorage();
     let cartQuantity = 0;
     cart.forEach((item) => {
       cartQuantity += item.quantity;
@@ -89,3 +92,5 @@ document.querySelectorAll('.add-to-cart-button').forEach((button) => {
   });
 
 });
+
+
