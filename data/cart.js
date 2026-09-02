@@ -43,3 +43,5 @@ export function saveToStorage() {
     saveToStorage();
 
 }
+
+console.log(cart);

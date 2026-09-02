@@ -1,3 +1,9 @@
+
+main idea of javascript 
+  -save the data 
+  -generate the html
+  - make it interactive 
+
 html data attribute 
 -is just an html attribute
 -have to start with "data-"
@@ -44,4 +50,7 @@ split our code into three parts
 model = save and manages the data 
 view = takes the data and displays it on the page
 controller = runs some code when we interact with the page
-15.00 
+15.27
+
+
+
