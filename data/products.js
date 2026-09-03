@@ -3,7 +3,7 @@
 export function getProduct(productId){
             let matchingItem;
             products.forEach((item) => {
-              if (item.productId === productId) {
+              if (item.id === productId) {
                 matchingItem = item;
               }
             });
