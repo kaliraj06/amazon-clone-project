@@ -16,6 +16,7 @@ if(!cart){
 
 
 export function saveToStorage() {
+    //loaca storage only store strings
     localStorage.setItem('cart',JSON.stringify(cart));
 }
 
