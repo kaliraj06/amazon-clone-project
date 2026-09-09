@@ -53,4 +53,21 @@ controller = runs some code when we interact with the page
 15.27
 
 
+testing 
+
+manual testing 
+disadvantages
+      hard to test every situation
+      hart to re test
+
+
+automated testing = using code to test code 
+
+
+in tests create basic test cases and  edge cases (if any)
+
+group of related tests = test suite
+
+
+15.58 testing framework
 
